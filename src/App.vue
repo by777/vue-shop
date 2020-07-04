@@ -1,32 +1,23 @@
+<!--
+ * @Author: Xu Bai
+ * @Date: 2020-07-03 23:21:38
+ * @LastEditors: Xu Bai
+ * @LastEditTime: 2020-07-04 12:32:40
+-->
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
+    <h1>这是app根目录</h1>
+    <router-view></router-view>
   </div>
 </template>
 
+<script>
+export default {
+  name: 'app'
+
+}
+</script>
+
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
 
-#nav {
-  padding: 30px;
-}
-
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-#nav a.router-link-exact-active {
-  color: #42b983;
-}
 </style>
