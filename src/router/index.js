@@ -2,14 +2,20 @@
  * @Author: Xu Bai
  * @Date: 2020-07-03 23:21:38
  * @LastEditors: Xu Bai
- * @LastEditTime: 2020-07-05 16:57:13
+ * @LastEditTime: 2020-07-05 22:15:13
  */
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Login from '../components/Login.vue'
 import Home from '../components/Home.vue'
 import Welcome from '../components/Welcome.vue'
+import Users from '../components/user/Users.vue'
 Vue.use(VueRouter)
+const originalPush = VueRouter.prototype.push
+// error: Avoided redundant navigation to current location:报错显示是路由重复，
+VueRouter.prototype.push = function push (location) {
+  return originalPush.call(this, location).catch(err => err)
+}
 
 const routes = [{
   path: '/login',
@@ -24,7 +30,8 @@ const routes = [{
   component: Home,
   redirect: '/welcome',
   children: [
-    { path: '/welcome', component: Welcome }
+    { path: '/welcome', component: Welcome },
+    { path: '/users', component: Users }
   ]
 }
 ]

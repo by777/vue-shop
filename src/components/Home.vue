@@ -2,7 +2,7 @@
  * @Author: Xu Bai
  * @Date: 2020-07-04 22:08:49
  * @LastEditors: Xu Bai
- * @LastEditTime: 2020-07-05 17:02:32
+ * @LastEditTime: 2020-07-05 22:12:11
 -->
 <template>
 
@@ -24,6 +24,7 @@
             :collapse="isCollapse"
             :router="true"
             :collapse-transition="false"
+            :default-active="activePath"
             background-color="#333744"
             text-color="#fff"
             active-text-color="#409EFF">
@@ -38,7 +39,7 @@
         <el-menu-item-group>
           <!-- <template slot="title">菜单</template> -->
 
-          <el-menu-item :index="'/'+subItem.path" v-for="subItem in item.children" :key="subItem.id">
+          <el-menu-item :index="'/'+subItem.path" v-for="subItem in item.children" :key="subItem.id" @click="saveNavState('/'+subItem.path)">
             <i class="el-icon-menu"></i>
             {{subItem.authName}}
           </el-menu-item>
@@ -62,6 +63,7 @@ export default {
   created () {
     // 请求菜单项
     this.getMenuList()
+    this.activePath = window.sessionStorage.getItem('activePath')
   },
   data () {
     return {
@@ -74,7 +76,9 @@ export default {
         145: 'el-icon-data-analysis'
       },
       // 是否折叠
-      isCollapse: false
+      isCollapse: false,
+      // 激活的列表项目
+      activePath: ''
     }
   },
   methods: {
@@ -91,6 +95,11 @@ export default {
     },
     toggleCollapse () {
       this.isCollapse = !this.isCollapse
+    },
+    saveNavState (activePath) {
+      // 保存链接的激活状态
+      window.sessionStorage.setItem('activePath', activePath)
+      this.activePath = activePath
     }
   }
 }
