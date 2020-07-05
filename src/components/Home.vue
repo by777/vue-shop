@@ -2,7 +2,7 @@
  * @Author: Xu Bai
  * @Date: 2020-07-04 22:08:49
  * @LastEditors: Xu Bai
- * @LastEditTime: 2020-07-05 12:17:55
+ * @LastEditTime: 2020-07-05 17:02:32
 -->
 <template>
 
@@ -15,8 +15,43 @@
             <el-button type="info" @click="logout">退出登录</el-button></el-header>
 
         <el-container>
-          <el-aside width="200px">Aside</el-aside>
-          <el-main>Main</el-main>
+          <el-aside :width="isCollapse ? '64px' : '200px'">
+            <div class="toggle-button" @click="toggleCollapse"> &lt;&lt;&lt; </div>
+             <!-- 侧边栏菜单区域 :unique-opened加冒号是一个布尔值，不加就是一个字符串-->
+             <!-- 关闭动画 -->
+            <el-menu
+            :unique-opened="true"
+            :collapse="isCollapse"
+            :router="true"
+            :collapse-transition="false"
+            background-color="#333744"
+            text-color="#fff"
+            active-text-color="#409EFF">
+      <!-- 一级菜单 :index="item.id + ''“绑定唯一id，否则会一同打开。加空字符串转换为字符串-->
+      <el-submenu :index="item.id + ''" v-for="item in menuList" :key="item.id">
+        <!-- 一级菜单对的模板区域 -->
+        <template slot="title">
+          <i :class="iconsObj[item.id]"></i>
+          <span>{{item.authName}}</span>
+        </template>
+        <!-- 二级菜单 -->
+        <el-menu-item-group>
+          <!-- <template slot="title">菜单</template> -->
+
+          <el-menu-item :index="'/'+subItem.path" v-for="subItem in item.children" :key="subItem.id">
+            <i class="el-icon-menu"></i>
+            {{subItem.authName}}
+          </el-menu-item>
+
+        </el-menu-item-group>
+
+      </el-submenu>
+
+    </el-menu>
+          </el-aside>
+          <el-main>
+            <router-view></router-view>
+          </el-main>
         </el-container>
         </el-container>
 
@@ -24,11 +59,38 @@
 
 <script>
 export default {
+  created () {
+    // 请求菜单项
+    this.getMenuList()
+  },
+  data () {
+    return {
+      menuList: [],
+      iconsObj: {
+        125: 'el-icon-user',
+        103: 'el-icon-set-up',
+        101: 'el-icon-goods',
+        102: 'el-icon-s-order',
+        145: 'el-icon-data-analysis'
+      },
+      // 是否折叠
+      isCollapse: false
+    }
+  },
   methods: {
     logout () {
       window.sessionStorage.clear()
       this.$message.success('退出登陆')
       this.$router.push('/login')
+    },
+    async getMenuList () {
+      const { data: res } = await this.$http.get('menus')
+      if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
+      this.menuList = res.data
+      console.log(res)
+    },
+    toggleCollapse () {
+      this.isCollapse = !this.isCollapse
     }
   }
 }
@@ -60,8 +122,24 @@ export default {
 }
 .el-aside{
   background-color: #333744;
+  .el-menu{
+    border-right: none;
+  }
 }
 .el-main{
   background-color: #eaedfe;
 }
+.iconfont{
+  margin-left: 10px;
+}
+.toggle-button{
+  background-color: #4A5064;
+  font-size: 10px;
+  line-height: 24px;
+  color: white;
+  text-align: center;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+}
+
 </style>
