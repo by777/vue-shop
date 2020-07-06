@@ -2,7 +2,7 @@
  * @Author: Xu Bai
  * @Date: 2020-07-05 11:13:51
  * @LastEditors: Xu Bai
- * @LastEditTime: 2020-07-05 22:42:02
+ * @LastEditTime: 2020-07-06 14:25:26
  */
 import Vue from 'vue'
 import {
@@ -19,7 +19,11 @@ import {
   Breadcrumb,
   BreadcrumbItem,
   Card,
-  Row, Col
+  Row, Col,
+  Table, TableColumn,
+  Switch,
+  Tooltip,
+  Pagination
 } from 'element-ui'
 // Message弹窗组件、有点区别，需要全局挂载
 
@@ -41,4 +45,9 @@ Vue.use(BreadcrumbItem)
 Vue.use(Card)
 Vue.use(Row)
 Vue.use(Col)
+Vue.use(Table)
+Vue.use(TableColumn)
+Vue.use(Switch)
+Vue.use(Tooltip)
+Vue.use(Pagination)
 Vue.prototype.$message = Message
