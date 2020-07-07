@@ -2,7 +2,7 @@
  * @Author: Xu Bai
  * @Date: 2020-07-05 21:56:44
  * @LastEditors: Xu Bai
- * @LastEditTime: 2020-07-07 14:34:12
+ * @LastEditTime: 2020-07-07 15:53:51
 -->
 <template>
     <div>
@@ -87,6 +87,7 @@
         title="添加用户"
         :visible.sync="addDialogVisible"
         width="30%"
+        @close="addDialogClosed"
         >
 
         <el-form :model="addForm" :rules="addFormRules" ref="addFormRef" label-width="70px" >
@@ -105,7 +106,7 @@
         </el-form>
         <span slot="footer" class="dialog-footer">
     <el-button @click="addDialogVisible = false">取 消</el-button>
-    <el-button type="primary" @click="addDialogVisible = false">确 定</el-button>
+    <el-button type="primary" @click="addUser">确 定</el-button>
   </span>
 </el-dialog>
     </div>
@@ -206,6 +207,24 @@ export default {
         return this.$message.error('更新用户信息失败')
       }
       this.$message.success('更新用户信息成功')
+    },
+    // 监听添加用户对话框关闭、重置表单内容
+    addDialogClosed () {
+      this.$refs.addFormRef.resetFields()
+    },
+    // 添加新用户
+    addUser () {
+      this.$refs.addFormRef.validate(async valid => {
+        // 校验
+        if (!valid) return this.$message.error('用户信息未通过本地校验')
+        const { data: res } = await this.$http.post('/users', this.addForm)
+        if (res.meta.status !== 201) return this.$message.error('添加用户失败')
+        this.$message.success('添加用户成功')
+        // 隐藏添加用户的对话框
+        this.addDialogVisible = false
+        // 重新获取用户列表
+        this.getUserList()
+      })
     }
 
   },
