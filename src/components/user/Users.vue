@@ -2,7 +2,7 @@
  * @Author: Xu Bai
  * @Date: 2020-07-05 21:56:44
  * @LastEditors: Xu Bai
- * @LastEditTime: 2020-07-06 14:38:45
+ * @LastEditTime: 2020-07-07 13:51:37
 -->
 <template>
     <div>
@@ -20,8 +20,8 @@
                 <!-- span占24栅格的多少 -->
                 <el-col :span="10">
                 <!-- 搜索与添加区域 -->
-                    <el-input placeholder="请输入内容"  class="input-with-select">
-                    <el-button slot="append" icon="el-icon-search"></el-button>
+                    <el-input placeholder="请输入内容"  class="input-with-select" v-model="queryInfo.query" clearable @clear="getUserList">
+                    <el-button slot="append" icon="el-icon-search" @click="getUserList"></el-button>
                     </el-input>
                 </el-col>
                 <el-col :span="4">
@@ -57,7 +57,7 @@
                     label="状态">
                     <template slot-scope="scope">
                         <!-- 作用域插槽会覆盖prop，删掉prop -->
-                        <el-switch v-model="scope.row.mg_state" ></el-switch>
+                        <el-switch v-model="scope.row.mg_state" @change="userStateChanged(scope.row)"></el-switch>
                     </template>
                 </el-table-column>
                 <el-table-column
@@ -123,6 +123,17 @@ export default {
       this.queryInfo.pagenum = newPage
       this.getUserList()
     //   console.log(newPage)
+    },
+    // 监听switch开关状态的改变
+    async userStateChanged (userInfo) {
+      const { data: res } = await this.$http.put(`/users/${userInfo.id}/state/${userInfo.mg_state}`)
+      console.log(res)
+      if (res.meta.status !== 200) {
+        // 页面状态改回去
+        userInfo.mg_state = !userInfo.mg_state
+        return this.$message.error('更新用户信息失败')
+      }
+      this.$message.success('更新用户信息成功')
     }
 
   },
