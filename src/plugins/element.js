@@ -2,7 +2,7 @@
  * @Author: Xu Bai
  * @Date: 2020-07-05 11:13:51
  * @LastEditors: Xu Bai
- * @LastEditTime: 2020-07-06 14:25:26
+ * @LastEditTime: 2020-07-07 13:54:49
  */
 import Vue from 'vue'
 import {
@@ -23,7 +23,8 @@ import {
   Table, TableColumn,
   Switch,
   Tooltip,
-  Pagination
+  Pagination,
+  Dialog
 } from 'element-ui'
 // Message弹窗组件、有点区别，需要全局挂载
 
@@ -50,4 +51,5 @@ Vue.use(TableColumn)
 Vue.use(Switch)
 Vue.use(Tooltip)
 Vue.use(Pagination)
+Vue.use(Dialog)
 Vue.prototype.$message = Message
