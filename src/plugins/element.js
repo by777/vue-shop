@@ -2,7 +2,7 @@
  * @Author: Xu Bai
  * @Date: 2020-07-05 11:13:51
  * @LastEditors: Xu Bai
- * @LastEditTime: 2020-07-07 13:54:49
+ * @LastEditTime: 2020-07-09 13:17:38
  */
 import Vue from 'vue'
 import {
@@ -24,7 +24,9 @@ import {
   Switch,
   Tooltip,
   Pagination,
-  Dialog
+  Dialog,
+  MessageBox,
+  Tag
 } from 'element-ui'
 // Message弹窗组件、有点区别，需要全局挂载
 
@@ -52,4 +54,8 @@ Vue.use(Switch)
 Vue.use(Tooltip)
 Vue.use(Pagination)
 Vue.use(Dialog)
+Vue.use(Tag)
+// Vue.use(MessageBox)错误
+// Vue.prototype.$confirm = MessageBox也会无法实现某些功能
+Vue.prototype.$confirm = MessageBox.confirm
 Vue.prototype.$message = Message

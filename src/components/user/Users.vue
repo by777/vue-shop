@@ -2,7 +2,7 @@
  * @Author: Xu Bai
  * @Date: 2020-07-05 21:56:44
  * @LastEditors: Xu Bai
- * @LastEditTime: 2020-07-08 16:27:26
+ * @LastEditTime: 2020-07-09 13:48:08
 -->
 <template>
     <div>
@@ -65,7 +65,7 @@
                     <template slot-scope="scope">
                       <!--  -->
                         <el-button type="primary" icon="el-icon-edit" size="mini" @click="showEditDialog(scope.row.id)"></el-button>
-                        <el-button type="danger" icon="el-icon-delete" size="mini"></el-button>
+                        <el-button type="danger" icon="el-icon-delete" size="mini" @click="removeUserById(scope.row.id)"></el-button>
                         <el-tooltip  effect="dark" content="分配角色" placement="top" :enterable="false">
                             <el-button type="warning" icon="el-icon-setting" size="mini"></el-button>
                         </el-tooltip>
@@ -200,7 +200,7 @@ export default {
         ],
         password: [
           { required: true, message: '请输入密码', trigger: 'blur' },
-          { min: 6, max: 15, message: '用户名长度在6~15字符之间', trigger: 'blur' }
+          { min: 6, max: 15, message: '密码长度在6~15字符之间', trigger: 'blur' }
         ],
         email: [
           { required: true, message: '请输入邮箱', trigger: 'blur' },
@@ -289,6 +289,25 @@ export default {
         this.$message.success('更新用户信息成功')
       })
     },
+    // 根据id删除对应用户
+    async removeUserById (id) {
+      this.$confirm('此操作将永久删除用户, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async () => {
+        const { data: res } = await this.$http.delete('users/' + id)
+        if (res.meta.status !== 200) return this.$message.info('删除失败、检查账号权限')
+        this.$message.success('删除成功')
+        this.getUserList()
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
+    },
+
     async showEditDialog (id) {
       console.log('要修改的用户id：' + id)
       const { data: res } = await this.$http.get('users/' + id)
