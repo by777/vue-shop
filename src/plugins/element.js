@@ -2,7 +2,7 @@
  * @Author: Xu Bai
  * @Date: 2020-07-05 11:13:51
  * @LastEditors: Xu Bai
- * @LastEditTime: 2020-07-11 16:25:25
+ * @LastEditTime: 2020-07-11 18:01:30
  */
 import Vue from 'vue'
 import {
@@ -27,7 +27,8 @@ import {
   Dialog,
   MessageBox,
   Tag,
-  Tree
+  Tree,
+  Select, Option
 } from 'element-ui'
 // Message弹窗组件、有点区别，需要全局挂载
 
@@ -57,6 +58,8 @@ Vue.use(Pagination)
 Vue.use(Dialog)
 Vue.use(Tag)
 Vue.use(Tree)
+Vue.use(Select)
+Vue.use(Option)
 // Vue.use(MessageBox)错误
 // Vue.prototype.$confirm = MessageBox也会无法实现某些功能
 Vue.prototype.$confirm = MessageBox.confirm
