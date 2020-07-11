@@ -2,7 +2,7 @@
  * @Author: Xu Bai
  * @Date: 2020-07-09 13:41:58
  * @LastEditors: Xu Bai
- * @LastEditTime: 2020-07-10 15:28:22
+ * @LastEditTime: 2020-07-11 15:53:28
 -->
 <template>
     <div>
@@ -39,7 +39,7 @@
                             <i class="el-icon-caret-right"></i>
                           </el-col>
                           <el-col :span="18">
-                            <el-tag type="warning" v-for="(item3) in item2.children" :key="item3.id" closable @close="removeRightById(scope.row.id,item3.id)" :disable-transitions="false" >{{item3.authName}}</el-tag>
+                            <el-tag type="warning" v-for="(item3) in item2.children" :key="item3.id" closable @close="removeRightById(scope.row,item3.id)" :disable-transitions="false" >{{item3.authName}}</el-tag>
 
                           </el-col>
                         </el-row>
@@ -94,7 +94,7 @@ export default {
         return this.$message.info('取消了删除权限')
       }
       console.log(role, rightId)
-      const { data: res } = await this.$http.delete(`roles/${role}/rights/${rightId}`)
+      const { data: res } = await this.$http.delete(`roles/${role.id}/rights/${rightId}`)
       console.log(res)
       if (res.meta.status !== 200) return this.$message.error('删除权限失败')
       this.$message.success('删除权限成功')
