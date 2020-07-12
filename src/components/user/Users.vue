@@ -2,7 +2,7 @@
  * @Author: Xu Bai
  * @Date: 2020-07-05 21:56:44
  * @LastEditors: Xu Bai
- * @LastEditTime: 2020-07-11 18:04:43
+ * @LastEditTime: 2020-07-12 21:06:04
 -->
 <template>
     <div>
@@ -142,6 +142,7 @@
   title="分配角色"
   :visible.sync="setRoleDialogVisible"
   width="50%"
+  @close="setRoleDialogClosed"
   >
   <div>
     <p>当前的用户：{{userInfo.username}}</p>
@@ -159,7 +160,7 @@
   </div>
   <span slot="footer" class="dialog-footer">
     <el-button @click="setRoleDialogVisible = false">取 消</el-button>
-    <el-button type="primary" @click="setRoleDialogVisible = false">确 定</el-button>
+    <el-button type="primary" @click="saveRoleInfo">确 定</el-button>
   </span>
 </el-dialog>
     </div>
@@ -210,7 +211,7 @@ export default {
       setRoleDialogVisible: false,
       // 需要被分配角色的用户信息
       userInfo: '',
-      // 被选中的角色id
+      // 被选中的git 角色id
       selectedRoleId: '',
       // 添加用户的表单数据
       addForm: {
@@ -358,6 +359,20 @@ export default {
       this.rolesList = res.data
       this.userInfo = userInfo
       this.setRoleDialogVisible = true
+    },
+    // 点击按钮，分配角色
+    async saveRoleInfo () {
+      if (!this.selectedRoleId) { return this.$message.error('没有选择新角色') }
+      const { data: res } = await this.$http.put(`users/${this.userInfo.id}/role`, { rid: this.selectedRoleId })
+      if (res.meta.status !== 200) return this.$message.error('更新角色失败')
+      this.$message.success('更新角色成功')
+      this.getUserList()
+      this.setRoleDialogVisible = false
+    },
+    // 分配角色对话框关闭事件
+    setRoleDialogClosed () {
+      this.selectedRoleId = ''
+      this.userInfo = {}
     }
 
   },

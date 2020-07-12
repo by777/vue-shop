@@ -2,7 +2,7 @@
  * @Author: Xu Bai
  * @Date: 2020-07-09 13:41:58
  * @LastEditors: Xu Bai
- * @LastEditTime: 2020-07-11 17:40:58
+ * @LastEditTime: 2020-07-12 20:51:30
 -->
 <template>
     <div>
@@ -58,7 +58,7 @@
                         <el-button type="primary" icon="el-icon-edit" size="mini">编辑</el-button>
                         <el-button type="danger" icon="el-icon-delete" size="mini">删除</el-button>
                         <el-button type="warning" icon="el-icon-setting" size="mini" @click="showSetRightDialog(scope.row)">分配权限</el-button>
-                        {{scope.row.id}}
+
                     </template>
                 </el-table-column>
             </el-table>
