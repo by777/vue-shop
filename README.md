@@ -1,24 +1,18 @@
+<!--
+ * @Author: Xu Bai
+ * @Date: 2020-07-03 23:21:54
+ * @LastEditors: Xu Bai
+ * @LastEditTime: 2020-07-12 21:15:54
+--> 
 # vue-shop
 
 ## Project setup
 ```
-npm install
+vue ui
 ```
 
-### Compiles and hot-reloads for development
+## database
 ```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
+node vue_api_server\app.js
 ```
 
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
