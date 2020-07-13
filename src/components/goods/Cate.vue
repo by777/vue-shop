@@ -2,7 +2,7 @@
  * @Author: Xu Bai
  * @Date: 2020-07-12 21:22:39
  * @LastEditors: Xu Bai
- * @LastEditTime: 2020-07-12 21:57:39
+ * @LastEditTime: 2020-07-13 20:21:16
 -->
 <template>
     <div>
@@ -21,7 +21,23 @@
             <tree-table :data="catelist" :columns="columns" :selection-type="false" :expand-type="false"
             show-index index-text="#" border
             >
+            <!-- 是否有效 -->
+              <template slot="isok" slot-scope="scope">
+                <i class="el-icon-success" v-if="scope.row.cat_deleted === false" style="color:lightgreen"></i>
+                <i class="el-icon-error" v-else style="color:red"></i>
+              </template>
+              <!-- 排序 -->
+              <template slot-scope="scope" slot="order">
+                <el-tag type="" size="mini" v-if="scope.row.cat_level === 0">一级</el-tag>
+                <el-tag type="success" size="mini" v-else-if="scope.row.cat_level === 1">二级</el-tag>
+                <el-tag type="warning" size="mini" v-else>三级</el-tag>
+              </template>
+              <!-- 操作 -->
+              <template slot="opt" slot-scope="scope">
+                <el-button type="primary" icon="el-icon-edit" size="mini">编辑</el-button>
+                <el-button type="danger" icon="el-icon-delte" size="mini" @click="alert('删除' + scope.row)">删除</el-button>
 
+              </template>
             </tree-table>
             <!-- 分页区域 -->
         </el-card>
@@ -45,7 +61,29 @@ export default {
       columns: [{
         label: '分类名称',
         prop: 'cat_name'
-      }]
+      },
+      {
+        label: '是否有效',
+        // 表示将当前列定义为模板列
+        type: 'template',
+        // 当前这一列使用的模板名称
+        template: 'isok'
+      },
+      {
+        label: '排序',
+        // 表示将当前列定义为模板列
+        type: 'template',
+        // 当前这一列使用的模板名称
+        template: 'order'
+      },
+      {
+        label: '操作',
+        // 表示将当前列定义为模板列
+        type: 'template',
+        // 当前这一列使用的模板名称
+        template: 'opt'
+      }
+      ]
     }
   },
   methods: {
