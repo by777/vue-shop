@@ -2,7 +2,7 @@
  * @Author: Xu Bai
  * @Date: 2020-07-12 21:22:39
  * @LastEditors: Xu Bai
- * @LastEditTime: 2020-07-13 20:21:16
+ * @LastEditTime: 2020-07-16 15:29:24
 -->
 <template>
     <div>
@@ -15,11 +15,11 @@
         <!-- 卡片区域 -->
         <el-card>
             <el-row>
-                <el-col><el-button type="primary">添加分类</el-button></el-col>
+                <el-col><el-button type="primary" @click="showAddCateDialog">添加分类</el-button></el-col>
             </el-row>
             <!-- 表格 -->
             <tree-table :data="catelist" :columns="columns" :selection-type="false" :expand-type="false"
-            show-index index-text="#" border
+            show-index index-text="#" border class="treeTable"
             >
             <!-- 是否有效 -->
               <template slot="isok" slot-scope="scope">
@@ -40,7 +40,38 @@
               </template>
             </tree-table>
             <!-- 分页区域 -->
+            <el-pagination
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page="queryInfo.pagenum"
+            :page-sizes="[3, 5, 10, 15]"
+            :page-size="queryInfo.pagesize"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="total">
+          </el-pagination>
         </el-card>
+        <!-- 添加分类的对话框 -->
+        <el-dialog
+          title="添加分类"
+          :visible.sync="addCateDialogVisible"
+          width="50%"
+          >
+          <!-- 添加分类的表单 -->
+          <el-form :model="addCateForm" :rules="addCateFormRules" ref="addCateFormRef" label-width="100px" >
+            <el-form-item label="分类名称：" prop="cat_name">
+              <el-input v-model="addCateForm.cat_name"></el-input>
+            </el-form-item>
+
+            <el-form-item label="父级分类：" >
+              <el-input></el-input>
+            </el-form-item>
+
+          </el-form>
+          <span slot="footer" class="dialog-footer">
+            <el-button @click="addCateDialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="addCateDialogVisible = false">确 定</el-button>
+          </span>
+        </el-dialog>
     </div>
 </template>
 <script>
@@ -56,6 +87,23 @@ export default {
         type: 3,
         pagenum: 1,
         pagesize: 5
+      },
+      // 添加分类对话框的显示与隐藏
+      addCateDialogVisible: false,
+      // 添加分类的表单数据对象
+      addCateForm: {
+        // 将要添加的分类名称
+        cat_name: '',
+        // 父级分类的ID
+        cat_pid: 0,
+        // 添加分类的等级，默认是一级分类
+        cat_level: 0
+      },
+      // 添加分类表单的验证规则对象
+      addCateFormRules: {
+        cat_name: [
+          { required: true, message: '请输入分类名称', trigger: 'blur' }
+        ]
       },
       // 为table指定列的定义
       columns: [{
@@ -95,7 +143,22 @@ export default {
       this.catelist = res.data.result
       this.total = res.data.total
       console.log(this.catelist)
+    },
+    // 监听pageSize改变事件
+    handleSizeChange (newSize) {
+      this.queryInfo.pagesize = newSize
+      this.getCateList()
+    },
+    // 监听pageNum的改变
+    handleCurrentChange (newPage) {
+      this.queryInfo.pagenum = newPage
+      this.getCateList()
+    },
+    // 弹出添加分类对话框
+    showAddCateDialog () {
+      this.addCateDialogVisible = true
     }
+
   },
   created () {
     this.getCateList()
@@ -104,5 +167,8 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.treeTable{
+  margin-top: 15px;
+}
 
 </style>
