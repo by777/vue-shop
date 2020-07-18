@@ -2,7 +2,7 @@
  * @Author: Xu Bai
  * @Date: 2020-07-12 21:22:39
  * @LastEditors: Xu Bai
- * @LastEditTime: 2020-07-16 15:29:24
+ * @LastEditTime: 2020-07-18 22:25:19
 -->
 <template>
     <div>
@@ -63,7 +63,11 @@
             </el-form-item>
 
             <el-form-item label="父级分类：" >
-              <el-input></el-input>
+              <!-- options用来指定数据源 props用来指定配置对象-->
+              <el-cascader :options="parentCateList" v-model="selectedKeys" @change="parentCateChanged"
+              expand-trigger="hover" :props="cascaderProps" clearable change-on-select>
+
+              </el-cascader>
             </el-form-item>
 
           </el-form>
@@ -99,6 +103,16 @@ export default {
         // 添加分类的等级，默认是一级分类
         cat_level: 0
       },
+      // 父级分类的列表
+      parentCateList: [],
+      // 指定级联选择器的对象
+      cascaderProps: {
+        value: 'cat_id',
+        label: 'cat_name',
+        children: 'children'
+      },
+      // 被选中的级联菜单
+      selectedKeys: [],
       // 添加分类表单的验证规则对象
       addCateFormRules: {
         cat_name: [
@@ -157,6 +171,22 @@ export default {
     // 弹出添加分类对话框
     showAddCateDialog () {
       this.addCateDialogVisible = true
+      this.getParentCateList()
+    },
+    // 获取父级分类的列表
+    async getParentCateList () {
+      const { data: res } = await this.$http.get('categories', {
+        params: {
+          type: 2
+        }
+      })
+      if (res.meta.status !== 200) return this.$message.error('获取商品列表失败')
+      // console.log(res.data)
+      this.parentCateList = res.data
+    },
+    // 选择项发生变化
+    parentCateChanged () {
+      console.log(this.selectedKeys)
     }
 
   },
@@ -170,5 +200,7 @@ export default {
 .treeTable{
   margin-top: 15px;
 }
-
+.el-cascader{
+  width: 100%;
+}
 </style>
