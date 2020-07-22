@@ -2,7 +2,7 @@
  * @Author: Xu Bai
  * @Date: 2020-07-12 21:22:39
  * @LastEditors: Xu Bai
- * @LastEditTime: 2020-07-18 22:25:19
+ * @LastEditTime: 2020-07-22 22:45:38
 -->
 <template>
     <div>
@@ -55,6 +55,7 @@
           title="添加分类"
           :visible.sync="addCateDialogVisible"
           width="50%"
+          @close="addCateDialogClose"
           >
           <!-- 添加分类的表单 -->
           <el-form :model="addCateForm" :rules="addCateFormRules" ref="addCateFormRef" label-width="100px" >
@@ -73,7 +74,7 @@
           </el-form>
           <span slot="footer" class="dialog-footer">
             <el-button @click="addCateDialogVisible = false">取 消</el-button>
-            <el-button type="primary" @click="addCateDialogVisible = false">确 定</el-button>
+            <el-button type="primary" @click="addCate">确 定</el-button>
           </span>
         </el-dialog>
     </div>
@@ -186,7 +187,39 @@ export default {
     },
     // 选择项发生变化
     parentCateChanged () {
-      console.log(this.selectedKeys)
+      // console.log(this.selectedKeys)
+      // 如果selectedKeys数组中的length大于0证明选中了父级分类
+      if (this.selectedKeys.length > 0) {
+        // 父级分类的id
+        this.addCateForm.cat_pid = this.selectedKeys[this.selectedKeys.length - 1]
+        console.log(this.selectedKeys[this.selectedKeys.length - 1])
+        // 维当前分类的等级赋值
+        this.addCateForm.cat_level = this.selectedKeys.length
+      } else {
+        this.addCateForm.cat_pid = 0
+        // 维当前分类的等级赋值
+        this.addCateForm.cat_level = 0
+      }
+    },
+    // 添加分类确定事件
+    addCate () {
+      console.log(this.addCateForm)
+      this.$refs.addCateFormRef.validate(async valid => {
+        if (!valid) return this.$message.error('请输入正确的表单项')
+        const { data: res } = await this.$http.post('categories', this.addCateForm)
+        if (res.meta.status !== 201) return this.$message.error('添加分类失败了')
+        this.$message.success('添加分类成功了')
+        this.getCateList()
+        this.addCateDialogVisible = false
+      })
+    },
+    // 添加分类对话框关闭事件
+    addCateDialogClose () {
+      this.$refs.addCateFormRef.resetFields()
+      this.selectedKeys = []
+      this.addCateForm.cat_level = 0
+      this.addCateForm.cat_pid = 0
+      this.addCateForm.cat_name = ''
     }
 
   },
