@@ -2,7 +2,7 @@
  * @Author: Xu Bai
  * @Date: 2020-07-05 11:13:51
  * @LastEditors: Xu Bai
- * @LastEditTime: 2020-07-18 22:06:59
+ * @LastEditTime: 2020-07-24 16:41:08
  */
 import Vue from 'vue'
 import {
@@ -29,7 +29,8 @@ import {
   Tag,
   Tree,
   Select, Option,
-  Cascader
+  Cascader,
+  Alert
 } from 'element-ui'
 // Message弹窗组件、有点区别，需要全局挂载
 
@@ -62,6 +63,7 @@ Vue.use(Tree)
 Vue.use(Select)
 Vue.use(Option)
 Vue.use(Cascader)
+Vue.use(Alert)
 // Vue.use(MessageBox)错误
 // Vue.prototype.$confirm = MessageBox也会无法实现某些功能
 Vue.prototype.$confirm = MessageBox.confirm
