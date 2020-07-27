@@ -2,7 +2,7 @@
  * @Author: Xu Bai
  * @Date: 2020-07-24 16:34:35
  * @LastEditors: Xu Bai
- * @LastEditTime: 2020-07-26 21:40:32
+ * @LastEditTime: 2020-07-27 21:37:32
 -->
 <template>
     <div>
@@ -34,7 +34,7 @@
              <el-tabs v-model="activeName" @tab-click="handleTabClick">
                <!-- 添加动态参数的面板 -->
               <el-tab-pane label="动态参数" name="many">
-                <el-button type="primary" size="mini" :disabled="isBtnDisable">添加参数</el-button>
+                <el-button type="primary" size="mini" :disabled="isBtnDisable" @click="addDialogVisible=true">添加参数</el-button>
                 <!-- 动态参数表格 -->
                 <el-table :data="manyTableData" border stripe >
                   <!-- 展开行 -->
@@ -52,7 +52,7 @@
               </el-tab-pane>
               <!-- 添加静态属性的面板 -->
               <el-tab-pane label="静态属性" name="only">
-                <el-button type="primary" size="mini" :disabled="isBtnDisable">添加属性</el-button>
+                <el-button type="primary" size="mini" :disabled="isBtnDisable" @click="addDialogVisible=true">添加属性</el-button>
                 <!-- 静态属性表格 -->
                 <el-table :data="onlyTableData" border stripe >
                   <!-- 展开行 -->
@@ -70,6 +70,25 @@
               </el-tab-pane>
             </el-tabs>
         </el-card>
+        <!-- 添加参数的对话框 -->
+        <el-dialog
+          :title="'添加'+titleText"
+          :visible.sync="addDialogVisible"
+          @close="addDiaglogClosed"
+          width="50%"
+          >
+          <!-- 添加参数的对话框 -->
+          <el-form :model="addForm" status-icon :rules="addFormRules" ref="addFormRef" label-width="100px" >
+            <el-form-item :label="titleText" prop="attr_name">
+              <el-input  v-model="addForm.attr_name" ></el-input>
+            </el-form-item>
+          </el-form>
+          <span slot="footer" class="dialog-footer">
+            <el-button @click="addDialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="addDialogVisible = false">确 定</el-button>
+          </span>
+        </el-dialog>
+
     </div>
 </template>
 <script>
@@ -91,7 +110,23 @@ export default {
       // 动态参数的数据
       manyTableData: [],
       // 静态属性的数据
-      onlyTableData: []
+      onlyTableData: [],
+      // 添加参数对话框的显示与隐藏
+      addDialogVisible: false,
+      // 添加参数的表单数据对象
+      addForm: {
+        attr_name: ''
+      },
+      // 验证规则
+      addFormRules: {
+        attr_name: [
+          {
+            required: true,
+            message: '请输入参数名称',
+            triggger: 'blur'
+          }
+        ]
+      }
     }
   },
   methods: {
@@ -129,6 +164,10 @@ export default {
           this.onlyTableData = res.data
         )
       }
+    },
+    // 对话框关闭
+    addDiaglogClosed () {
+      this.$refs.addFormRef.resetFields()
     }
 
   },
@@ -144,10 +183,15 @@ export default {
     cateId () {
       if (this.selectedCateKeys.length === 3) return this.selectedCateKeys[2]
       return null
+    },
+    // 计算标题的文本
+    titleText () {
+      if (this.activeName === 'many') return '动态参数'
+      else return '静态属性'
     }
   }
-
 }
+
 </script>
 <style lang="less" scoped>
 .cat_opt{
