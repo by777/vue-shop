@@ -2,7 +2,7 @@
  * @Author: Xu Bai
  * @Date: 2020-07-24 16:34:35
  * @LastEditors: Xu Bai
- * @LastEditTime: 2020-07-30 21:54:34
+ * @LastEditTime: 2020-08-01 23:08:41
 -->
 <template>
     <div>
@@ -43,7 +43,7 @@
                   <el-table-column label="参数名称" prop="attr_name"></el-table-column>
                   <el-table-column label="操作" >
                     <template slot-scope="scope">{{scope.row.attr_id}}
-                      <el-button type="primary" icon="el-icon-edit" size="mini">编辑</el-button>
+                      <el-button type="primary" icon="el-icon-edit" size="mini" @click="showEditDiaglog">编辑</el-button>
                       <el-button type="danger" icon="el-icon-delete" size="mini">删除</el-button>
                     </template>
                   </el-table-column>
@@ -61,7 +61,7 @@
                   <el-table-column label="属性名称" prop="attr_name"></el-table-column>
                   <el-table-column label="操作" >
                     <template slot-scope="scope">{{scope.row.attr_id}}
-                      <el-button type="primary" icon="el-icon-edit" size="mini">编辑</el-button>
+                      <el-button type="primary" icon="el-icon-edit" size="mini" @click="showEditDiaglog">编辑</el-button>
                       <el-button type="danger" icon="el-icon-delete" size="mini">删除</el-button>
                     </template>
                   </el-table-column>
@@ -89,6 +89,25 @@
           </span>
         </el-dialog>
 
+        <!-- 修改参数的对话框 -->
+                <el-dialog
+          :title="'修改'+titleText"
+          :visible.sync="editDialogVisible"
+          @close="editDiaglogClosed"
+          width="50%"
+          >
+          <!-- 添加参数的对话框 -->
+          <el-form :model="editForm" status-icon :rules="editFormRules" ref="editFormRef" label-width="100px" >
+            <el-form-item :label="titleText" prop="attr_name">
+              <el-input  v-model="editForm.attr_name" ></el-input>
+            </el-form-item>
+          </el-form>
+          <span slot="footer" class="dialog-footer">
+            <el-button @click="editDialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="editdParams">确 定</el-button>
+          </span>
+        </el-dialog>
+
     </div>
 </template>
 <script>
@@ -113,12 +132,28 @@ export default {
       onlyTableData: [],
       // 添加参数对话框的显示与隐藏
       addDialogVisible: false,
+      // 修改
+      editDialogVisible: false,
       // 添加参数的表单数据对象
       addForm: {
         attr_name: ''
       },
+      // 修改
+      editForm: {
+
+      },
       // 验证规则
       addFormRules: {
+        attr_name: [
+          {
+            required: true,
+            message: '请输入参数名称',
+            triggger: 'blur'
+          }
+        ]
+      },
+      // 同上
+      editFormRules: {
         attr_name: [
           {
             required: true,
@@ -182,6 +217,18 @@ export default {
         this.addDialogVisible = false
         this.getParamsData()
       })
+    },
+    // 修改参数对话框
+    showEditDiaglog () {
+      this.editDialogVisible = true
+    },
+    // 重置修改的表单
+    editDiaglogClosed () {
+      this.$refs.editFormRef.resetFields()
+    },
+    // 修改参数信息
+    editdParams () {
+
     }
 
   },
