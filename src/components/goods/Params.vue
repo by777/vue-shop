@@ -2,7 +2,7 @@
  * @Author: Xu Bai
  * @Date: 2020-07-24 16:34:35
  * @LastEditors: Xu Bai
- * @LastEditTime: 2020-08-01 23:08:41
+ * @LastEditTime: 2020-08-05 23:10:39
 -->
 <template>
     <div>
@@ -42,9 +42,9 @@
                   <el-table-column label="#" type="index"></el-table-column>
                   <el-table-column label="参数名称" prop="attr_name"></el-table-column>
                   <el-table-column label="操作" >
-                    <template slot-scope="scope">{{scope.row.attr_id}}
-                      <el-button type="primary" icon="el-icon-edit" size="mini" @click="showEditDiaglog">编辑</el-button>
-                      <el-button type="danger" icon="el-icon-delete" size="mini">删除</el-button>
+                    <template slot-scope="scope">
+                      <el-button type="primary" icon="el-icon-edit" size="mini" @click="showEditDiaglog(scope.row.attr_id)">编辑</el-button>
+                      <el-button type="danger" icon="el-icon-delete" size="mini" @click="removeParams(scope.row.attr_id)">删除</el-button>
                     </template>
                   </el-table-column>
 
@@ -60,9 +60,9 @@
                   <el-table-column label="#" type="index"></el-table-column>
                   <el-table-column label="属性名称" prop="attr_name"></el-table-column>
                   <el-table-column label="操作" >
-                    <template slot-scope="scope">{{scope.row.attr_id}}
-                      <el-button type="primary" icon="el-icon-edit" size="mini" @click="showEditDiaglog">编辑</el-button>
-                      <el-button type="danger" icon="el-icon-delete" size="mini">删除</el-button>
+                    <template slot-scope="scope">
+                      <el-button type="primary" icon="el-icon-edit" size="mini" @click="showEditDiaglog(scope.row.attr_id)">编辑</el-button>
+                      <el-button type="danger" icon="el-icon-delete" size="mini" @click="removeParams(scope.row.attr_id)">删除</el-button>
                     </template>
                   </el-table-column>
 
@@ -219,7 +219,12 @@ export default {
       })
     },
     // 修改参数对话框
-    showEditDiaglog () {
+    async showEditDiaglog (attrId) {
+      const { data: res } = await this.$http.get(`categories/${this.cateId}/attributes/${attrId}`,
+        { params: { attr_sel: this.activeName } })
+      if (res.meta.status !== 200) return this.$message.error('获取参数信息失败')
+      this.editForm = res.data
+
       this.editDialogVisible = true
     },
     // 重置修改的表单
@@ -228,9 +233,30 @@ export default {
     },
     // 修改参数信息
     editdParams () {
-
+      this.$refs.editFormRef.validate(async valid => {
+        if (!valid) return this.$message.error('本地校验未通过！')
+        const { data: res } = await this.$http.put(`categories/${this.cateId}/attributes/${this.editForm.attr_id}`,
+          { attr_name: this.editForm.attr_name, attr_sel: this.activeName })
+        console.log(res)
+        if (res.meta.status !== 200) return this.$message.error('修改参数失败！')
+        this.$message.success('修改参数成功！')
+        this.getParamsData()
+        this.editDialogVisible = false
+      })
+    },
+    // id删除参数
+    async removeParams (attrId) {
+      const confirmResult = await this.$confirm('将删除该参数，是否继续？', '提示', {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).catch(err => err)
+      if (confirmResult !== 'confirm') return this.$message.info('已经取消删除！')
+      const { data: res } = await this.$http.delete(`categories/${this.cateId}/attributes/${attrId}`)
+      if (res.meta.status !== 200) return this.$message.error('删除参数失败！')
+      this.$message.success('删除参数成功！')
+      this.getParamsData()
     }
-
   },
   created () {
     this.getCateList()

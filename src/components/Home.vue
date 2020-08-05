@@ -2,7 +2,7 @@
  * @Author: Xu Bai
  * @Date: 2020-07-04 22:08:49
  * @LastEditors: Xu Bai
- * @LastEditTime: 2020-07-05 22:12:11
+ * @LastEditTime: 2020-08-05 23:14:29
 -->
 <template>
 
@@ -16,7 +16,7 @@
 
         <el-container>
           <el-aside :width="isCollapse ? '64px' : '200px'">
-            <div class="toggle-button" @click="toggleCollapse"> &lt;&lt;&lt; </div>
+            <div class="toggle-button" @click="toggleCollapse"> ||||| </div>
              <!-- 侧边栏菜单区域 :unique-opened加冒号是一个布尔值，不加就是一个字符串-->
              <!-- 关闭动画 -->
             <el-menu
