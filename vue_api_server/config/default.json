@@ -11,7 +11,7 @@
 	},
 	"db_config" : {
 		"protocol" : "mysql",
-		"host" : "192.168.1.106",
+		"host" : "192.168.1.109",
 		"database" : "vue",
 		"user" : "root",
 		"password" : "mypassword",

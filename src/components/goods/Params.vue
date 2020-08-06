@@ -2,7 +2,7 @@
  * @Author: Xu Bai
  * @Date: 2020-07-24 16:34:35
  * @LastEditors: Xu Bai
- * @LastEditTime: 2020-08-05 23:10:39
+ * @LastEditTime: 2020-08-06 22:24:37
 -->
 <template>
     <div>
@@ -39,6 +39,9 @@
                 <el-table :data="manyTableData" border stripe >
                   <!-- 展开行 -->
                   <el-table-column label="#" type="expand"></el-table-column>
+                    <template slot-scope="scope">
+                      <el-tag type="" v-for="(item,i) in scope.row.attr_vals" :key="i" closable >{{item}}</el-tag>
+                    </template>
                   <el-table-column label="#" type="index"></el-table-column>
                   <el-table-column label="参数名称" prop="attr_name"></el-table-column>
                   <el-table-column label="操作" >
@@ -191,6 +194,10 @@ export default {
       const { data: res } = await this.$http.get(`categories/${this.cateId}/attributes`,
         { params: { sel: this.activeName } })
       if (res.meta.status !== 200) return this.$message.error('获取参数失败！')
+      // console.log(res.data)
+      res.data.forEach(item => {
+        item.attr_vals = (item.attr_vals || '').split(' ')
+      })
       console.log(res.data)
       if (this.activeName === 'many') {
         this.manyTableData = res.data
@@ -283,5 +290,8 @@ export default {
 <style lang="less" scoped>
 .cat_opt{
     margin: 15px 0;
+}
+.el-tag{
+  margin: 10px;
 }
 </style>
