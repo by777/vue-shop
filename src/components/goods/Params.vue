@@ -2,7 +2,7 @@
  * @Author: Xu Bai
  * @Date: 2020-07-24 16:34:35
  * @LastEditors: Xu Bai
- * @LastEditTime: 2020-08-06 22:24:37
+ * @LastEditTime: 2020-08-07 22:20:22
 -->
 <template>
     <div>
@@ -38,10 +38,26 @@
                 <!-- 动态参数表格 -->
                 <el-table :data="manyTableData" border stripe >
                   <!-- 展开行 -->
-                  <el-table-column label="#" type="expand"></el-table-column>
+                  <el-table-column  type="expand">
                     <template slot-scope="scope">
-                      <el-tag type="" v-for="(item,i) in scope.row.attr_vals" :key="i" closable >{{item}}</el-tag>
+                      <el-tag type="" v-for="(item,i) in (scope.row.attr_vals)" :key="i"
+                      @close="handleClose(i,scope.row)"
+                      closable >{{item}}</el-tag>
+                      <!-- 添加TAG按钮的切换 -->
+                      <el-input
+                          class="input-new-tag"
+                          v-if="scope.row.inputVisible"
+                          v-model="scope.row.inputValue"
+                          ref="saveTagInput"
+                          size="small"
+                          @keyup.enter.native="handleInputConfirm(scope.row)"
+                          @blur="handleInputConfirm(scope.row)"
+                        >
+                        </el-input>
+                        <el-button v-else class="button-new-tag" size="small" @click="showInput(scope.row)">+ New Tag</el-button>
+
                     </template>
+                    </el-table-column>
                   <el-table-column label="#" type="index"></el-table-column>
                   <el-table-column label="参数名称" prop="attr_name"></el-table-column>
                   <el-table-column label="操作" >
@@ -137,6 +153,7 @@ export default {
       addDialogVisible: false,
       // 修改
       editDialogVisible: false,
+
       // 添加参数的表单数据对象
       addForm: {
         attr_name: ''
@@ -184,6 +201,11 @@ export default {
     handleTabClick () {
       this.getParamsData()
     },
+    // 关闭标签，删除参数的可选项
+    handleClose (i, row) {
+      row.attr_vals.splice(i, 1)
+      this.saveAttrVals(row)
+    },
     // 获取参数列表
     async getParamsData () {
       if (this.selectedCateKeys.length !== 3) {
@@ -196,9 +218,14 @@ export default {
       if (res.meta.status !== 200) return this.$message.error('获取参数失败！')
       // console.log(res.data)
       res.data.forEach(item => {
-        item.attr_vals = (item.attr_vals || '').split(' ')
+        item.attr_vals = item.attr_vals.trim
+          ? item.attr_vals.split(' ') : []
+          // 控制文本框的显示与隐藏
+        item.inputVisible = false
+        // 文本框输入的值
+        item.inputValue = ''
       })
-      console.log(res.data)
+      // console.log(res.data)
       if (this.activeName === 'many') {
         this.manyTableData = res.data
       } else {
@@ -263,11 +290,46 @@ export default {
       if (res.meta.status !== 200) return this.$message.error('删除参数失败！')
       this.$message.success('删除参数成功！')
       this.getParamsData()
+    },
+    // 标签输入结束事件
+    async handleInputConfirm (row) {
+      if (row.inputValue.trim().length === 0) {
+        row.inputValue = ''
+        row.inputVisible = false
+      }
+      // 后续处理
+      this.saveAttrVals(row)
+    },
+
+    // 将对attr_vals的操作保存到数据库
+    async saveAttrVals (row) {
+      row.attr_vals.push(row.inputValue.trim())
+      row.inputValue = ''
+      row.inputVisible = false
+      const { data: res } = await this.$http.put(`categories/${this.cateId}/attributes/${row.attr_id}`, {
+        attr_name: row.attr_name,
+        attr_sel: row.attr_sel,
+        attr_vals: row.attr_vals.join(' ')
+      })
+      if (res.meta.status !== 200) return this.$message.error('添加参数项失败！')
+      this.$message.success('添加参数项成功！')
+    },
+
+    // 按下添加标签，打开文本狂
+    showInput (row) {
+      row.inputVisible = true
+      // 文本框获得焦点
+      // nextTick页面文件被重新渲染之后，才会指定回调函数中的代码
+      this.$nextTick(_ => {
+        this.$refs.saveTagInput.$refs.input.focus()
+      })
     }
   },
+
   created () {
     this.getCateList()
   },
+
   computed: {
     // 如果按钮需要被禁用,则返回true
     isBtnDisable () {
@@ -293,5 +355,8 @@ export default {
 }
 .el-tag{
   margin: 10px;
+}
+.input-new-tag{
+  width: 150px;
 }
 </style>
