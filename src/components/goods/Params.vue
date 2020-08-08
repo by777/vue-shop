@@ -2,7 +2,7 @@
  * @Author: Xu Bai
  * @Date: 2020-07-24 16:34:35
  * @LastEditors: Xu Bai
- * @LastEditTime: 2020-08-08 21:17:15
+ * @LastEditTime: 2020-08-08 21:25:16
 -->
 <template>
     <div>
@@ -38,7 +38,7 @@
                 <!-- 动态参数表格 -->
                 <el-table :data="manyTableData" border stripe >
                   <!-- 展开行 -->
-                  <el-table-column  type="expand">
+                  <el-table-column label="·" type="expand">
                     <template slot-scope="scope">
                       <el-tag type="" v-for="(item,i) in (scope.row.attr_vals)" :key="i"
                       @close="handleClose(i,scope.row)"
@@ -75,7 +75,26 @@
                 <!-- 静态属性表格 -->
                 <el-table :data="onlyTableData" border stripe >
                   <!-- 展开行 -->
-                  <el-table-column label="#" type="expand"></el-table-column>
+                    <el-table-column label="·" type="expand">
+                              <template slot-scope="scope">
+                                <el-tag type="" v-for="(item,i) in (scope.row.attr_vals)" :key="i"
+                                @close="handleClose(i,scope.row)"
+                                closable >{{item}}</el-tag>
+                                <!-- 添加TAG按钮的切换 -->
+                                <el-input
+                                    class="input-new-tag"
+                                    v-if="scope.row.inputVisible"
+                                    v-model="scope.row.inputValue"
+                                    ref="saveTagInput"
+                                    size="small"
+                                    @keyup.enter.native="handleInputConfirm(scope.row)"
+                                    @blur="handleInputConfirm(scope.row)"
+                                  >
+                                  </el-input>
+                                  <el-button v-else class="button-new-tag" size="small" @click="showInput(scope.row)">+ New Tag</el-button>
+
+                              </template>
+                              </el-table-column>
                   <el-table-column label="#" type="index"></el-table-column>
                   <el-table-column label="属性名称" prop="attr_name"></el-table-column>
                   <el-table-column label="操作" >
@@ -212,6 +231,8 @@ export default {
     async getParamsData () {
       if (this.selectedCateKeys.length !== 3) {
         this.selectedCateKeys = []
+        this.manyTableData = []
+        this.onlyTableData = []
         return this.$message.error('只能选择三级分类！')
       }
       // 根据所选分类的ID和面板获取对应的参数
