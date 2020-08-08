@@ -2,7 +2,7 @@
  * @Author: Xu Bai
  * @Date: 2020-07-24 16:34:35
  * @LastEditors: Xu Bai
- * @LastEditTime: 2020-08-07 22:20:22
+ * @LastEditTime: 2020-08-08 21:17:15
 -->
 <template>
     <div>
@@ -201,11 +201,13 @@ export default {
     handleTabClick () {
       this.getParamsData()
     },
+
     // 关闭标签，删除参数的可选项
     handleClose (i, row) {
       row.attr_vals.splice(i, 1)
       this.saveAttrVals(row)
     },
+
     // 获取参数列表
     async getParamsData () {
       if (this.selectedCateKeys.length !== 3) {
@@ -296,23 +298,24 @@ export default {
       if (row.inputValue.trim().length === 0) {
         row.inputValue = ''
         row.inputVisible = false
+        return
       }
       // 后续处理
+      row.attr_vals.push(row.inputValue.trim())
+      row.inputValue = ''
+      row.inputVisible = false
       this.saveAttrVals(row)
     },
 
     // 将对attr_vals的操作保存到数据库
     async saveAttrVals (row) {
-      row.attr_vals.push(row.inputValue.trim())
-      row.inputValue = ''
-      row.inputVisible = false
       const { data: res } = await this.$http.put(`categories/${this.cateId}/attributes/${row.attr_id}`, {
         attr_name: row.attr_name,
         attr_sel: row.attr_sel,
         attr_vals: row.attr_vals.join(' ')
       })
-      if (res.meta.status !== 200) return this.$message.error('添加参数项失败！')
-      this.$message.success('添加参数项成功！')
+      if (res.meta.status !== 200) return this.$message.error('修改参数项失败！')
+      this.$message.success('修改参数项成功！')
     },
 
     // 按下添加标签，打开文本狂
