@@ -2,7 +2,7 @@
  * @Author: Xu Bai
  * @Date: 2020-08-08 21:30:06
  * @LastEditors: Xu Bai
- * @LastEditTime: 2020-08-09 22:44:09
+ * @LastEditTime: 2020-08-11 16:42:22
 -->
 <template>
     <div>
@@ -16,8 +16,8 @@
         <el-card>
             <el-row :gutter="20">
               <el-col :span="8">
-                    <el-input placeholder="请输入内容">
-                        <el-button slot="append" icon="el-icon-search"></el-button>
+                    <el-input placeholder="请输入内容" clearable @clear="getGoodsList" v-model="queryInfo.query">
+                        <el-button slot="append" icon="el-icon-search" @click="getGoodsList"></el-button>
                     </el-input>
               </el-col>
               <el-col :span="4">
@@ -38,11 +38,22 @@
               <el-table-column label="操作" width="180px">
                 <template slot-scope="scope">
                   <el-button type="primary" icon="el-icon-edit" size="mini"></el-button>
-                  <el-button type="danger" icon="el-icon-delete" size="mini"></el-button>
-                    {{scope.row.goods_id}}
+                  <el-button type="danger" icon="el-icon-delete" size="mini" @click="removeById(scope.row.goods_id)"></el-button>
+
                 </template>
               </el-table-column>
             </el-table>
+            <!-- 分页区域 -->
+            <el-pagination
+                background
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange"
+                :current-page="queryInfo.pagenum"
+                :page-sizes="[5, 10, 15, 20]"
+                :page-size="queryInfo.pagesize"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="total">
+              </el-pagination>
         </el-card>
     </div>
 </template>
@@ -78,6 +89,29 @@ export default {
       // console.log(res.data)
       this.goodslist = res.data.goods
       this.total = res.data.total
+    },
+    // 控制分页
+    handleSizeChange (newSize) {
+      this.queryInfo.pagesize = newSize
+      this.getGoodsList()
+    },
+    // 最新的页码
+    handleCurrentChange (newPage) {
+      this.queryInfo.pagenum = newPage
+      this.getGoodsList()
+    },
+    // 删除商品
+    async removeById (id) {
+      const confirmResult = await this.$confirm('此操作将永久删除改商品，是否继续？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).catch(err => err)
+      if (confirmResult !== 'confirm') return this.$message.info('取消了删除')
+      const { data: res } = await this.$http.delete(`goods/${id}`)
+      if (res.meta.status !== 200) return this.$message.error('删除商品失败！')
+      this.$message.success('删除商品成功！')
+      this.getGoodsList()
     }
   }
 }
