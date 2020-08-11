@@ -2,7 +2,7 @@
  * @Author: Xu Bai
  * @Date: 2020-07-03 23:21:38
  * @LastEditors: Xu Bai
- * @LastEditTime: 2020-08-08 21:33:35
+ * @LastEditTime: 2020-08-11 16:50:22
  */
 import Vue from 'vue'
 import VueRouter from 'vue-router'
@@ -13,8 +13,9 @@ import Users from '../components/user/Users.vue'
 import Rights from '../components/power/Rights.vue'
 import Roles from '../components/power/Roles.vue'
 import Cate from '../components/goods/Cate.vue'
-import Params from '../components/goods/Params'
-import GoodsList from '../components/goods/List'
+import Params from '../components/goods/Params.vue'
+import GoodsList from '../components/goods/List.vue'
+import Add from '../components/goods/Add.vue'
 Vue.use(VueRouter)
 const originalPush = VueRouter.prototype.push
 // error: Avoided redundant navigation to current location:报错显示是路由重复，
@@ -41,7 +42,8 @@ const routes = [{
     { path: '/roles', component: Roles },
     { path: '/categories', component: Cate },
     { path: '/params', component: Params },
-    { path: '/goods', component: GoodsList }
+    { path: '/goods', component: GoodsList },
+    { path: '/goods/add', component: Add }
   ]
 }
 ]

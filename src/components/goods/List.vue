@@ -2,7 +2,7 @@
  * @Author: Xu Bai
  * @Date: 2020-08-08 21:30:06
  * @LastEditors: Xu Bai
- * @LastEditTime: 2020-08-11 16:42:22
+ * @LastEditTime: 2020-08-11 16:45:35
 -->
 <template>
     <div>
@@ -21,7 +21,7 @@
                     </el-input>
               </el-col>
               <el-col :span="4">
-                  <el-button type="primary">添加商品</el-button>
+                  <el-button type="primary" @click="goAddpage">添加商品</el-button>
               </el-col>
             </el-row>
             <!-- table表格 -->
@@ -112,6 +112,10 @@ export default {
       if (res.meta.status !== 200) return this.$message.error('删除商品失败！')
       this.$message.success('删除商品成功！')
       this.getGoodsList()
+    },
+    // 去添加商品页
+    goAddpage () {
+      this.$router.push('/goods/add')
     }
   }
 }
