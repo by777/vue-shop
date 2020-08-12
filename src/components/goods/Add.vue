@@ -2,7 +2,7 @@
  * @Author: Xu Bai
  * @Date: 2020-08-11 16:46:16
  * @LastEditors: Xu Bai
- * @LastEditTime: 2020-08-12 14:20:25
+ * @LastEditTime: 2020-08-12 14:30:56
 -->
 <template>
     <div>
@@ -76,6 +76,8 @@ export default {
         goods_weight: 0,
         goods_number: 0
       },
+      // 所有商品列表
+      cateList: [],
       // 添加商品的验证规则
       addFormRules: {
         goods_name: [
@@ -94,9 +96,17 @@ export default {
     }
   },
   created () {
-
+    this.getCateList()
   },
-  methods: {}
+  methods: {
+    // 获取所有商品分类数据
+    async getCateList () {
+      const { data: res } = await this.$http.get('categories')
+      if (res.meta.status !== 200) return this.$message.error('请求商品列表失败')
+      this.cateList = res.data
+      console.log(this.cateList)
+    }
+  }
 }
 </script>
 <style lang="less" scoped>
