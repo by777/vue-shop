@@ -2,7 +2,7 @@
  * @Author: Xu Bai
  * @Date: 2020-07-05 11:13:51
  * @LastEditors: Xu Bai
- * @LastEditTime: 2020-08-12 13:48:38
+ * @LastEditTime: 2020-08-13 23:35:22
  */
 import Vue from 'vue'
 import {
@@ -32,7 +32,8 @@ import {
   Cascader,
   Alert,
   Tabs, TabPane,
-  Steps, Step
+  Steps, Step,
+  CheckboxGroup, Checkbox
 } from 'element-ui'
 // Message弹窗组件、有点区别，需要全局挂载
 
@@ -70,6 +71,8 @@ Vue.use(Tabs)
 Vue.use(TabPane)
 Vue.use(Steps)
 Vue.use(Step)
+Vue.use(CheckboxGroup)
+Vue.use(Checkbox)
 // Vue.use(MessageBox)错误
 // Vue.prototype.$confirm = MessageBox也会无法实现某些功能
 Vue.prototype.$confirm = MessageBox.confirm
