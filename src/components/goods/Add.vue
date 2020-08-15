@@ -2,7 +2,7 @@
  * @Author: Xu Bai
  * @Date: 2020-08-11 16:46:16
  * @LastEditors: Xu Bai
- * @LastEditTime: 2020-08-13 23:42:20
+ * @LastEditTime: 2020-08-15 23:45:42
 -->
 <template>
     <div>
@@ -69,12 +69,39 @@
                     </el-checkbox-group>
                 </el-form-item>
               </el-tab-pane>
-              <el-tab-pane label="商品属性" name="2">商品属性</el-tab-pane>
-              <el-tab-pane label="商品图片" name="3">商品图片</el-tab-pane>
-              <el-tab-pane label="商品内容" name="4">商品内容</el-tab-pane>
+              <el-tab-pane label="商品属性" name="2">
+                <el-form-item :label="item.attr_name" v-for="item in onlyTableData" :key="item.attr_id">
+                  <el-input v-model="item.attr_vals" placeholder=""></el-input>
+                </el-form-item>
+              </el-tab-pane>
+              <el-tab-pane label="商品图片" name="3">
+                <el-upload
+                  :on-success="handleSuccess"
+                  :headers="headerObj"
+                  :action="uploadURL"
+                  :on-preview="handlePreview"
+                  :on-remove="handleRemove"
+                  list-type="picture">
+                  <el-button size="small" type="primary">点击上传</el-button>
+
+                </el-upload>
+              </el-tab-pane>
+              <el-tab-pane label="商品内容" name="4">
+                <!-- 富文本编辑器 -->
+                <quill-editor v-model="addForm.goods_introduce"></quill-editor>
+                <el-button type="primary" class="btnAdd">添加商品</el-button>
+              </el-tab-pane>
             </el-tabs>
           </el-form>
       </el-card>
+      <!-- 图片预览对话框 -->
+      <el-dialog
+        title="图片预览"
+        :visible.sync="previewVisible"
+        width="50%"
+        >
+        <img :src="previewPath" class="previewImg">
+      </el-dialog>
     </div>
 </template>
 
@@ -91,7 +118,13 @@ export default {
         goods_weight: 0,
         goods_number: 0,
         // 商品所属的分类数组
-        goods_cat: []
+        goods_cat: [],
+        // 图片的数组
+        pics: [
+
+        ],
+        // 详情描述
+        goods_introduce: ''
       },
       //
       cateProps: {
@@ -101,8 +134,19 @@ export default {
       },
       // 动态参数列表数据
       manyTableData: [],
+      // 静态属性
+      onlyTableData: [],
       // 所有商品列表
       cateList: [],
+      // 上传的文件地址
+      uploadURL: 'http://127.0.0.1:8888/api/private/v1/upload',
+      // 图片上传的请求头
+      headerObj: {
+        Authorization: window.sessionStorage.getItem('token')
+      },
+      // 预览图片地址
+      previewPath: '',
+      previewVisible: false,
       // 添加商品的验证规则
       addFormRules: {
         goods_name: [
@@ -160,6 +204,31 @@ export default {
         })
         this.manyTableData = res.data
         console.log(this.manyTableData)
+      } else if (this.activeIndex === '2') {
+        const { data: res } = await this.$http.get(`categories/${this.cateId}/attributes`, { params: { sel: 'only' } })
+        if (res.meta.status !== 200) return this.$message.error('获取静态属性数据失败！')
+        // console.log(res.data)
+        this.onlyTableData = res.data
+      }
+    },
+    // 图片预览事件
+    handlePreview (file) {
+      this.previewPath = file.response.data.url
+      this.previewVisible = true
+    },
+    // 移除图片
+    handleRemove (file) {
+      const filePath = file.response.data.tmp_path
+      const i = this.addForm.pics.findIndex(x => x.pic === filePath)
+      this.addForm.pics.splice(i, 1)
+    },
+    // 上传图片成功
+    handleSuccess (response) {
+      const picInfo = { pic: response.data.tmp_path }
+      this.addForm.pics.push(picInfo)
+      console.log(this.addForm)
+      if (response.meta === 200) {
+
       }
     }
   },
@@ -174,5 +243,11 @@ export default {
 <style lang="less" scoped>
 .el-checkbox{
   margin: 0 10px 0 0 !important;
+}
+.previewImg{
+  width: 100%;
+}
+.btnAdd{
+  margin-top: 15px;
 }
 </style>
