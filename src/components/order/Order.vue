@@ -2,7 +2,7 @@
  * @Author: Xu Bai
  * @Date: 2020-08-17 22:50:27
  * @LastEditors: Xu Bai
- * @LastEditTime: 2020-08-18 23:26:13
+ * @LastEditTime: 2020-08-18 23:51:44
 -->
 <template>
     <div>
@@ -41,7 +41,7 @@
               <el-table-column label="操作" >
                 <template slot-scope="scope">
                   <el-button type="primary" icon="el-icon-edit" size="mini" @click="showBox">{{scope.row.order_id}}</el-button>
-                  <el-button type="success" icon="el-icon-location" size="mini">{{scope.row.order_id}}</el-button>
+                  <el-button type="success" icon="el-icon-location" size="mini" @click="showProcessBox">{{scope.row.order_id}}</el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -61,11 +61,13 @@
           title="修改地址"
           :visible.sync="addressVisiable"
           width="30%"
+          @close="addressDialogClosed"
           >
           <span>
         <el-form :model="addressForm" :rules="addressFormRules" ref="addressFormRef" label-width="auto">
           <el-form-item label="省市区/县" prop="address1">
-            <el-input v-model="addressForm.address1"></el-input>
+            <!-- <el-input v-model="addressForm.address1"></el-input> -->
+            <el-cascader :options="cityData" v-model="addressForm.address1"></el-cascader>
           </el-form-item>
           <el-form-item label="详细地址" prop="address2">
             <el-input v-model="addressForm.address2"></el-input>
@@ -74,12 +76,21 @@
         </span>
           <span slot="footer" class="dialog-footer">
             <el-button @click="addressVisiable = false">取 消</el-button>
-            <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+            <el-button type="primary" @click="addressVisiable = false">确 定</el-button>
           </span>
         </el-dialog>
+        // 展示物流进度的对话框
+          <el-dialog
+            title="物流进度"
+            :visible.sync="processVisible"
+            width="50%"
+            >
+            <span>这是一段信息</span>
+          </el-dialog>
     </div>
 </template>
 <script>
+import cityData from './citydata.js'
 export default {
   data () {
     return {
@@ -96,14 +107,18 @@ export default {
         address1: [],
         address2: ''
       },
-      addressFormRef: {
+      addressFormRules: {
         address1: [
           { required: true, message: '请选择省市区/县', trigger: 'blur' }
         ],
         address2: [
           { required: true, message: '请填写详细地址', trigger: 'blur' }
         ]
-      }
+      },
+      cityData,
+      processVisible: false,
+      // 物流进度
+      progressInfo: []
     }
   },
   created () {
@@ -127,13 +142,27 @@ export default {
       this.queryInfo.pagenum = newPage
       this.getOrderList()
     },
-    // 展示修海地址
+    // 展示修改地址
     showBox () {
       this.addressVisiable = true
+    },
+    addressDialogClosed () {
+      this.$refs.addressFormRef.resetFields()
+    },
+    // 物流按钮
+    async showProcessBox () {
+      const { data: res } = await this.$http.get('/kuaidi/1106975712662')
+      if (res.meta.status !== 200) return this.$message.error('获取物流进度失败！')
+      this.progressInfo = res.data
+      console.log(res.data)
+      this.processVisible = true
     }
   }
 }
 </script>
 <style lang="less" scoped>
-
+.el-cascader{
+  width: 100%;
+  // height: 50px;
+}
 </style>
