@@ -2,7 +2,7 @@
  * @Author: Xu Bai
  * @Date: 2020-08-17 22:50:27
  * @LastEditors: Xu Bai
- * @LastEditTime: 2020-08-17 23:04:56
+ * @LastEditTime: 2020-08-18 23:26:13
 -->
 <template>
     <div>
@@ -21,7 +21,62 @@
                   </el-input>
               </el-col>
             </el-row>
+            <!-- 订单列表 -->
+            <el-table :data="orderlist" border stripe >
+              <el-table-column label="#" type="index"></el-table-column>
+              <el-table-column label="订单编号" prop="order_number"></el-table-column>
+              <el-table-column label="订单价格" prop="order_price"></el-table-column>
+              <el-table-column label="是否付款" prop="pay_status">
+                <template slot-scope="scope">
+                  <el-tag type="success" v-if="scope.row.pay_status == '1'">已付款</el-tag>
+                  <el-tag type="danger" v-else>未付款</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column label="是否发货" prop="is_send"></el-table-column>
+              <el-table-column label="下单时间" prop="create_time">
+                <template slot-scope='scope'>
+                  {{scope.row.create_time | dateFormat}}
+                </template>
+              </el-table-column>
+              <el-table-column label="操作" >
+                <template slot-scope="scope">
+                  <el-button type="primary" icon="el-icon-edit" size="mini" @click="showBox">{{scope.row.order_id}}</el-button>
+                  <el-button type="success" icon="el-icon-location" size="mini">{{scope.row.order_id}}</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+            <!-- 分页 -->
+          <el-pagination
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page="queryInfo.pagenum"
+            :page-sizes="[5, 10, 15, 20]"
+            :page-size="queryInfo.pagesize"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="total">
+          </el-pagination>
         </el-card>
+        <!-- 修改地址 -->
+        <el-dialog
+          title="修改地址"
+          :visible.sync="addressVisiable"
+          width="30%"
+          >
+          <span>
+        <el-form :model="addressForm" :rules="addressFormRules" ref="addressFormRef" label-width="auto">
+          <el-form-item label="省市区/县" prop="address1">
+            <el-input v-model="addressForm.address1"></el-input>
+          </el-form-item>
+          <el-form-item label="详细地址" prop="address2">
+            <el-input v-model="addressForm.address2"></el-input>
+          </el-form-item>
+        </el-form>
+        </span>
+          <span slot="footer" class="dialog-footer">
+            <el-button @click="addressVisiable = false">取 消</el-button>
+            <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+          </span>
+        </el-dialog>
     </div>
 </template>
 <script>
@@ -34,7 +89,21 @@ export default {
         pagesize: 10
       },
       total: 0,
-      orderlist: []
+      orderlist: [],
+      // 修改地址对话框
+      addressVisiable: false,
+      addressForm: {
+        address1: [],
+        address2: ''
+      },
+      addressFormRef: {
+        address1: [
+          { required: true, message: '请选择省市区/县', trigger: 'blur' }
+        ],
+        address2: [
+          { required: true, message: '请填写详细地址', trigger: 'blur' }
+        ]
+      }
     }
   },
   created () {
@@ -47,6 +116,20 @@ export default {
       if (res.meta.status !== 200) return this.$message.error('获取订单列表失败！')
       this.total = res.data.total
       this.orderlist = res.data.goods
+    },
+    // 分页
+    handleSizeChange (newSize) {
+      this.queryInfo.pagesize = newSize
+      this.getOrderList()
+    },
+    // 页码值发生变化
+    handleCurrentChange (newPage) {
+      this.queryInfo.pagenum = newPage
+      this.getOrderList()
+    },
+    // 展示修海地址
+    showBox () {
+      this.addressVisiable = true
     }
   }
 }
