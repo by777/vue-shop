@@ -2,7 +2,7 @@
  * @Author: Xu Bai
  * @Date: 2020-07-03 23:21:38
  * @LastEditors: Xu Bai
- * @LastEditTime: 2020-08-17 22:53:08
+ * @LastEditTime: 2020-08-19 21:13:59
  */
 import Vue from 'vue'
 import VueRouter from 'vue-router'
@@ -17,6 +17,7 @@ import Params from '../components/goods/Params.vue'
 import GoodsList from '../components/goods/List.vue'
 import Add from '../components/goods/Add.vue'
 import Order from '../components/order/Order.vue'
+import Report from '../components/report/Report'
 Vue.use(VueRouter)
 const originalPush = VueRouter.prototype.push
 // error: Avoided redundant navigation to current location:报错显示是路由重复，
@@ -45,7 +46,8 @@ const routes = [{
     { path: '/params', component: Params },
     { path: '/goods', component: GoodsList },
     { path: '/goods/add', component: Add },
-    { path: '/orders', component: Order }
+    { path: '/orders', component: Order },
+    { path: '/reports', component: Report }
   ]
 }
 ]
