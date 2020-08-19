@@ -2,7 +2,7 @@
  * @Author: Xu Bai
  * @Date: 2020-07-05 11:13:51
  * @LastEditors: Xu Bai
- * @LastEditTime: 2020-08-15 23:01:10
+ * @LastEditTime: 2020-08-19 21:03:04
  */
 import Vue from 'vue'
 import {
@@ -34,10 +34,12 @@ import {
   Tabs, TabPane,
   Steps, Step,
   CheckboxGroup, Checkbox,
-  Upload
+  Upload,
+  Timeline, TimelineItem
 } from 'element-ui'
 // Message弹窗组件、有点区别，需要全局挂载
-
+// import Timeline from './timeline/index.js'
+// import TimelineItem from './timeline-item/index.js'
 // 注册为全局可用的组件
 Vue.use(Button)
 Vue.use(Form)
@@ -75,6 +77,8 @@ Vue.use(Step)
 Vue.use(CheckboxGroup)
 Vue.use(Checkbox)
 Vue.use(Upload)
+Vue.use(Timeline)
+Vue.use(TimelineItem)
 // Vue.use(MessageBox)错误
 // Vue.prototype.$confirm = MessageBox也会无法实现某些功能
 Vue.prototype.$confirm = MessageBox.confirm

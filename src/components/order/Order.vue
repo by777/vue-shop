@@ -2,7 +2,7 @@
  * @Author: Xu Bai
  * @Date: 2020-08-17 22:50:27
  * @LastEditors: Xu Bai
- * @LastEditTime: 2020-08-18 23:51:44
+ * @LastEditTime: 2020-08-19 21:07:38
 -->
 <template>
     <div>
@@ -85,7 +85,17 @@
             :visible.sync="processVisible"
             width="50%"
             >
-            <span>这是一段信息</span>
+            <span>
+              <!-- 时间线 -->
+                <el-timeline >
+                  <el-timeline-item
+                    v-for="(activity, index) in progressInfo"
+                    :key="index"
+                    :timestamp="activity.time">
+                    {{activity.context}}
+                  </el-timeline-item>
+                </el-timeline>
+            </span>
           </el-dialog>
     </div>
 </template>
@@ -161,6 +171,7 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+
 .el-cascader{
   width: 100%;
   // height: 50px;
