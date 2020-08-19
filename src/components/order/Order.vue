@@ -2,7 +2,7 @@
  * @Author: Xu Bai
  * @Date: 2020-08-17 22:50:27
  * @LastEditors: Xu Bai
- * @LastEditTime: 2020-08-19 21:07:38
+ * @LastEditTime: 2020-08-19 21:42:33
 -->
 <template>
     <div>
@@ -39,9 +39,9 @@
                 </template>
               </el-table-column>
               <el-table-column label="操作" >
-                <template slot-scope="scope">
-                  <el-button type="primary" icon="el-icon-edit" size="mini" @click="showBox">{{scope.row.order_id}}</el-button>
-                  <el-button type="success" icon="el-icon-location" size="mini" @click="showProcessBox">{{scope.row.order_id}}</el-button>
+                <template >
+                  <el-button type="primary" icon="el-icon-edit" size="mini" @click="showBox"></el-button>
+                  <el-button type="success" icon="el-icon-location" size="mini" @click="showProcessBox"></el-button>
                 </template>
               </el-table-column>
             </el-table>
